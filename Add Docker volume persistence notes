@@ -1,0 +1,120 @@
+Docker Volumes
+
+
+Problem: container data is ephemaral 
+
+data written inside a containers normal writable layer is lost when the container is removed.
+
+docker run -d --name voltest ubuntu sleep 300
+docker exec -it voltest bash
+echo "hello from container" > /data.txt
+cat /data.txt
+exit
+docker rm -f voltest
+docker run -d --name voltest ubuntu sleep 300
+docker exec -it voltest bash
+cat /data.txt
+
+Result:
+
+file does not exist.
+This proves container filesystem data is ephemaral.
+
+Creating a docker volume:
+
+>>List volume:
+docker volume ls
+
+Create a volume:
+
+docker volume create mydata
+
+docker volume ls
+
+>>Mounting a volume into a container:
+
+Run a container with the volume mounted:
+
+docker run -d --name voltest -v mydata:/data ubuntu sleep 300
+
+Meaning:
+
+mydata → Docker-managed volume
+/data  → mount path inside container
+
+Creating a file insdie the mounted volume:
+
+docker exec -it voltest bash
+echo "persistent file" > /data/test.txt
+cat /data/test.txt
+exit
+
+
+Peristence across container deletion:
+
+docker rm -f voltest
+
+Started a new container with:
+
+docker run -d --name voltest2 -v mydata:/data ubuntu sleep 300
+
+checking the file with :
+
+docker exec -it voltest2 bash
+cat /data/test.txt
+
+Result file is available!
+This proves volume data survives container deletion.
+
+Meaning of docker rm -f 
+
+-f means force remove.
+
+behaviour:
+
+running container → force stop → remove
+stopped container → remove
+
+without -f, docker removes only stopped containers.
+
+Inspecting a volume:
+
+docker volume inspect mydata
+
+important fields:
+
+Name
+Driver
+Mountpoint
+
+Mountpoint shows where Docker stores the volume data on the host.
+
+
+Key concept:
+
+container lifecycle ≠ volume lifecycle
+
+Containers can be removed and recreated, while volume data remains.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
