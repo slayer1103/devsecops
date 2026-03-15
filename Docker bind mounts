@@ -1,0 +1,111 @@
+>>A bind mount maps a real host directly into a container 
+
+host path
+↓
+mounted into container path
+
+>>Difference from volume:
+
+volume     → Docker-managed storage
+bind mount → direct host path mapping
+
+>>Creating a Host Directory
+
+On the host:
+
+mkdir -p ~/binddemo
+echo "hello from host" > ~/binddemo/file.txt
+cat ~/binddemo/file.txt
+
+This creates data on the host system.
+
+>>Mounting Host Directory into Container
+
+Run conatainer with bind mount:
+
+docker run -it --name bindtest -v ~/binddemo:/data ubuntu bash
+
+
+Inside container :
+
+ls /data
+cat /data/file.txt
+
+This proves the cotainer can read files directly from the host directory.
+
+>>Writing from container to host
+
+Inside the container:
+
+echo "written from container" > /data/from_container.txt
+cat /data/from_container.txt
+exit
+
+on the host:
+
+ls ~/binddemo
+cat ~/binddemo/from_container.txt
+
+This proves files created inside the container appear directly on the host.
+
+>>Live sync behaviour:
+
+Run container again:
+
+docker run -it --name bindlive -v ~/binddemo:/data ubuntu bash
+
+Inside container:
+
+cat /data/file.txt
+
+from another host terminal:
+
+echo "host changed this" > ~/binddemo/file.txt
+cat ~/binddemo/file.txt
+
+
+Back inside container:
+
+cat /data/file.txt
+This proves bind mounts reflect live changes immediately.
+
+Removing Container Does Not Remove Host Files
+
+Remove container:
+
+docker rm = -f bindlive
+
+Verify on host:
+
+ls ~/binddemo
+cat ~/binddemo/file.txt
+cat ~/binddemo/from_container.txt
+
+Result:
+host file remain unchanged.
+
+This proves bind-mounted data belongs to the host path, not to the container lifecylce.
+
+>>Key concept:
+bind mount = direct live mapping of host files into container
+
+>>Use cases:
+
+local development
+config files
+source code sharing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
