@@ -1,0 +1,112 @@
+# Docker – Bind Mounts
+
+## Concept
+Bind mounts allow a container to directly use files or directories from the host system.
+
+Unlike volumes, bind mounts use your actual filesystem.
+
+---
+
+## Example
+
+Create directory on host:
+
+```bash
+mkdir -p ~/bind-demo
+cd ~/bind-demo
+echo "Hello from host" > file.txt
+```
+
+Run container with bind mount:
+
+```bash
+docker run -it --name bindtest -v ~/bind-demo:/data ubuntu bash
+```
+
+---
+
+## Verification (Inside Container)
+
+```bash
+cat /data/file.txt
+```
+
+Output:
+```
+Hello from host
+```
+
+---
+
+## Modify from Container
+
+```bash
+echo "Changed from container" > /data/file.txt
+exit
+```
+
+---
+
+## Verify on Host
+
+```bash
+cat ~/bind-demo/file.txt
+```
+
+Output:
+```
+Changed from container
+```
+
+---
+
+## Key Concept
+
+```text
+host filesystem ↔ container filesystem
+```
+
+Changes are reflected instantly on both sides.
+
+---
+
+## Difference from Volumes
+
+### Volumes
+- Managed by Docker  
+- Stored internally  
+- Used for persistent application data  
+- Safer for production  
+
+### Bind Mounts
+- Uses host filesystem  
+- Direct access to files  
+- Used for development and testing  
+- Real-time file sync  
+
+---
+
+## Use Cases
+
+```text
+development (live code editing)
+configuration files
+logs inspection
+```
+
+---
+
+## Important Notes
+
+- No copy happens → same file is shared  
+- Deleting file in container deletes it on host  
+- Requires correct path on host  
+
+---
+
+## Summary
+
+```text
+volume → Docker-managed storage  
+bind mount → host-controlled storage  
+```
