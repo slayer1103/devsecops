@@ -1,0 +1,6 @@
+services:
+  app:
+    image: alpine
+    command: sh -c "echo $$MY_NAME && sleep 300"
+    environment:
+      - MY_NAME=Yashodhan

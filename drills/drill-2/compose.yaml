@@ -1,0 +1,12 @@
+services:
+  sender:
+    image: alpine
+    command: sh -c "echo $$MSG && sleep 300"
+    environment:
+      - MSG=HelloFromSender
+  
+  receiver:
+    image: alpine
+    command: sh -c "echo $$MSG && sleep 300"
+    environment:
+      - MSG=HelloFromReceiver
