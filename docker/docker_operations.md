@@ -1,87 +1,161 @@
-Docker container operations
+# Docker — Container Operations
 
+## Concept
+
+Docker containers are running instances of images. Container operations involve creating, inspecting, interacting with, and removing these instances.
+
+```text
+docker run → container created → process runs → lifecycle managed
+```
+
+---
+
+## Run Container
+
+```bash
 docker run -d --name test_container ubuntu sleep 300
+```
 
-Options: 
+### Options
 
--d → run container in background
---name → assign container name
-sleep 300 → keep container alive for 300 seconds
+```text
+-d        → run container in background (detached)
+--name    → assign human-readable container name
+sleep 300 → keeps container alive for 300 seconds
+```
 
-Verifying if running by : 
+---
 
+## Verify Running Containers
+
+```bash
 docker ps
+```
 
-Inspecting container metadata:
+```text
+shows currently running containers
+```
 
+---
+
+## Inspect Container
+
+```bash
 docker inspect test_container
+```
 
-important fields:
+### Important Fields
 
+```text
 Container ID
 Image
 Network settings
 IP address
 Mounts
 Environment variables
+```
 
+---
 
-Executing commands inside container:
+## Execute Commands Inside Container
 
+```bash
 docker exec -it test_container bash
+```
 
-example commands:
+### Example Commands
 
+```bash
 hostname
 ps aux
-This shows process running inside the container.
+```
 
-Conatiner logs:
+```text
+shows container hostname and running processes
+```
 
+---
+
+## View Container Logs
+
+```bash
 docker logs test_container
-Logs show the stdout and stderr of the containers main process.
+```
 
-for following logs in real time:
+```text
+shows stdout and stderr of main container process
+```
+
+---
+
+## Follow Logs in Real Time
+
+```bash
 docker logs -f test_container
+```
 
-For stopping running container we use:
+---
+
+## Stop Container
+
+```bash
 docker stop test_container
+```
 
-Removing the container:
+```text
+gracefully stops running container
+```
 
+---
+
+## Remove Container
+
+```bash
 docker rm test_container
+```
 
-Removes rm test_container
-Removes container metadata and writable filesystem
+```text
+removes container metadata and writable layer
+container must be stopped before removal
+```
 
-For verifying removal
+---
 
+## Verify Removal
+
+```bash
 docker ps -a
+```
 
+```text
+container should not appear in list
+```
 
+---
 
+## Key Takeaways
 
+```text
+docker run → create + start container
+docker ps → check running containers
+docker exec → interact with container
+docker logs → debug container behavior
+docker stop → stop execution
+docker rm → remove container completely
+```
 
+---
 
+## Execution Flow
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```text
+run container
+↓
+verify using docker ps
+↓
+inspect / exec / logs
+↓
+stop container
+↓
+remove container
+``` 

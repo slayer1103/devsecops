@@ -1,59 +1,162 @@
+# Linux — Day 05: Processes
+
+## Concept
+
 A process is a running instance of a program.
-Every command executed in Linux becomes a process managed by the kernel.
 
-ps:
-Displays processes attached to the current terminal session.
-Used to view active processes quickly.
+```text
+command → process → managed by kernel
+```
 
+Every command executed in Linux becomes a process scheduled and controlled by the kernel.
+
+---
+
+## Commands Covered
+
+### 1. `ps` — View Processes (Current Session)
+
+```bash
+ps
+```
+
+```text
+shows processes attached to current terminal
+```
+
+---
+
+### 2. `ps aux` — View All Processes
+
+```bash
 ps aux
+```
 
-Displays all running processes in the system.
+```text
+lists all running processes in the system
+```
 
-Columns observed:
-	•	USER → owner of process
-	•	PID → unique identifier assigned by kernel
-	•	%CPU → CPU usage
-	•	%MEM → memory usage
-	•	COMMAND → program being executed
+### Important Columns
 
-Used to inspect system-wide activity.
+```text
+USER   → process owner
+PID    → process ID
+%CPU   → CPU usage
+%MEM   → memory usage
+COMMAND → program being executed
+```
 
-top:
-Real-time monitoring tool.
-Observed:
-	•	Load average (number of runnable processes over time)
-	•	CPU usage breakdown (user, system, idle)
-	•	Memory usage
-	•	Live process consumption
+---
 
-Exited using q.
+### 3. `top` — Real-Time Monitoring
 
-yes > /dev/null:
-Creates a CPU-bound process by continuously writing output discarded to /dev/null.
-Used to intentionally generate CPU load.
+```bash
+top
+```
 
-kill <PID>:
-Sends a termination signal to a process.
-Used to stop CPU-heavy or background processes.
+```text
+interactive view of system processes
+updates in real time
+```
 
-Key Observations
-	•	Every running program is a process.
-	•	Each process has a unique PID.
-	•	Load average measures demand, not percentage.
-	•	CPU spikes correlate to compute-heavy processes.
-	•	Killing a process immediately reduces system load.
-	•	Processes form a hierarchical tree structure.
+### Observations
 
-  Mistakes / Corrections
-	•	Typed tap instead of top.
-	•	Initially misunderstood load average as CPU percentage.
-	•	Installed unrelated package before correcting command.
+```text
+load average → system demand over time
+CPU usage    → user / system / idle
+memory usage → RAM consumption
+process list → live resource usage
+```
 
-  What I Learned
-	•	The Linux kernel schedules and manages processes.
-	•	System resource usage can be monitored in real time.
-	•	Process control is deliberate and reversible.
-	•	Cause and effect in system load can be reproduced and observed.
+Exit:
 
+```text
+press q
+```
 
+---
 
+### 4. Generate CPU Load
+
+```bash
+yes > /dev/null
+```
+
+```text
+creates continuous CPU usage
+output discarded to /dev/null
+used for testing system behavior
+```
+
+---
+
+### 5. `kill` — Stop Process
+
+```bash
+kill <PID>
+```
+
+```text
+sends termination signal to process
+used to stop running processes
+```
+
+---
+
+## Process Behavior
+
+```text
+each process has unique PID
+processes are managed by kernel scheduler
+processes can be monitored and controlled
+```
+
+---
+
+## Key Observations
+
+```text
+every program runs as a process
+load average ≠ CPU percentage
+high CPU usage → compute-heavy processes
+killing process reduces system load
+processes form parent-child hierarchy
+```
+
+---
+
+## Mistakes / Corrections
+
+```text
+typed "tap" instead of "top"
+misunderstood load average as CPU %
+installed unrelated package initially
+```
+
+---
+
+## Key Takeaways
+
+```text
+kernel manages process lifecycle
+ps → snapshot view
+top → real-time monitoring
+kill → process control
+system behavior can be observed and reproduced
+```
+
+---
+
+## Execution Flow
+
+```text
+run command
+↓
+process created
+↓
+monitor using ps / top
+↓
+generate load (yes)
+↓
+control using kill
+```

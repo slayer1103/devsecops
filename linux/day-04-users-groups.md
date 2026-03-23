@@ -1,80 +1,191 @@
-Today we learned User and groups.
+# Linux — Day 04: Users & Groups
 
-id - shows UID,Primary GID, Secondary groups.
-Used to verify user identity and group membership
+## Concept
 
-groups -
-Displays groups a users belongs to.
+Linux manages access using identities and roles:
 
+```text
+user  → identity
+group → role / shared access
+```
+
+Permissions are applied based on ownership:
+
+```text
+user (owner) | group | others
+```
+
+---
+
+## Commands Covered
+
+### 1. `id` — User Identity
+
+```bash
+id
+```
+
+```text
+shows UID, primary GID, secondary groups
+```
+
+---
+
+### 2. `groups` — Group Membership
+
+```bash
+groups
+```
+
+```text
+lists groups a user belongs to
+```
+
+---
+
+### 3. `adduser` — Create User
+
+```bash
 sudo adduser devuser
-above commands creates a new user.
-it helps simulating a seperate identity.
-observations once user is created that it does not directly has the sudo privileges.
+```
 
-Sudo groupadd projectgroup
+```text
+creates a new user account
+no sudo privileges by default
+```
+
+---
+
+### 4. `groupadd` — Create Group
+
+```bash
+sudo groupadd projectgroup
+```
+
+```text
 creates a new group
-it was used in our simulation for demonstrating access control
+used for shared access control
+```
 
-sudo usermod  -aG projectgroup devuser
-- it used to add users to groups.
-  
--a -> appends
--G -> specify group
+---
 
-why used: To grant group-level access to shared directory.
-Mistake encountered:
-Running this as devuser failed because devuser is not listed in sudoers, as in not in administrative group.
+### 5. `usermod` — Add User to Group
 
-su -devuser
-- using to switch specified to user.
-Used for testing access restrictions in production.
+```bash
+sudo usermod -aG projectgroup devuser
+```
 
+```text
+-a → append (do not overwrite existing groups)
+-G → target group
+```
+
+```text
+grants group-level access to resources
+```
+
+---
+
+### 6. `su` — Switch User
+
+```bash
+su - devuser
+```
+
+```text
+switch to another user account
+used to test access restrictions
+```
+
+---
+
+### 7. `chown` — Change Group Ownership
+
+```bash
 sudo chown :projectgroup /srv/project
-changes group ownership only.
-used for ensuring group based permissions only.
+```
 
+```text
+changes group ownership only
+```
+
+---
+
+### 8. `chmod` — Set Permissions
+
+```bash
 chmod 770 /srv/project
+```
 
-sets:
-owner - full access
-group - full access
-other - no access
+```text
+owner → full access
+group → full access
+others → no access
+```
 
-used for restricting to only owner and group members only.
+---
 
-Mistakes Encountered
-	1.	Tried using sudo as devuser → denied (not in sudoers).
-	2.	Tried accessing shared directory inside home directory → failed.
-	3.	Realized parent directory (/home/yourusername) had 700 permissions.
-	4.	Understood that execute permission is required on all parent directories.
+## Access Control Setup (Example)
 
-Key Learning
-	•	Users represent identities.
-	•	Groups represent roles.
-	•	Ownership determines which permission set applies.
-	•	Sudo is restricted to authorized users.
-	•	Path traversal requires execute permission on all directories in the path.
-	•	Linux enforces hierarchy strictly.
+```text
+create user → devuser
+create group → projectgroup
+add user to group
+assign group ownership to directory
+set permissions (770)
+```
 
-Traversal logic
+---
 
-Linux evaluates directory access step-by-step from root to the target path.
-A user must have execute (x) permission on every parent directory to reach the final file or folder.
+## Key Observations
 
-<img width="969" height="564" alt="image" src="https://github.com/user-attachments/assets/97ee1a8f-8ff9-4151-984d-c93cbfd70f92" />
+```text
+new users do not have sudo access
+group membership controls shared access
+ownership determines permission application
+```
 
+---
 
+## Common Mistakes
 
+```text
+using sudo as non-sudo user → denied
+accessing directory inside restricted parent → failed
+ignoring parent directory permissions
+```
 
+---
 
+## Path Traversal Logic
 
+```text
+Linux checks access from root → target directory
+user must have execute (x) permission on ALL parent directories
+```
 
+### Example
 
+```text
+/home/user/project/file
+```
 
+User needs `x` permission on:
 
+```text
+/home
+/home/user
+/home/user/project
+```
 
+---
 
+## Key Takeaways
 
-
-
-
+```text
+users → identities
+groups → shared roles
+sudo → restricted administrative access
+permissions depend on ownership
+directory traversal requires execute permission at every level
+```

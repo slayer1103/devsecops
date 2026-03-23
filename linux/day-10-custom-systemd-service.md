@@ -1,26 +1,61 @@
-Created a custom Bash script and converted it into a systemd-managed service.
-Learned how systemd supervises, restarts, and logs services.
+# Linux — Creating & Managing a Custom systemd Service
 
+## Concept
 
-Script name: ~/hello.sh
-Script contents:
+A custom script can be managed as a background service using `systemd`.
+
+```text
+script → systemd service → supervised execution
+```
+
+This allows:
+- automatic start/stop
+- restart on failure
+- centralized logging
+
+---
+
+## Step 1 — Create Script
+
+Path:
+
+```text
+/home/slayer/hello.sh
+```
+
+Contents:
+
+```bash
 #!/bin/bash
+
 while true
 do
-    echo "Service running at $(date)" >> /home/slayer/hello.log
-    sleep 5
+  echo "Service running at $(date)" >> /home/slayer/hello.log
+  sleep 5
 done
+```
 
+---
 
-Changed its permissions to make it executable:
+## Step 2 — Make Executable
 
+```bash
 chmod +x ~/hello.sh
+```
 
-Then We created a service unit file:
-Path: /etc/systemd/system/hello.service
+---
 
-File contents: 
+## Step 3 — Create Service Unit File
 
+Path:
+
+```text
+/etc/systemd/system/hello.service
+```
+
+Contents:
+
+```ini
 [Unit]
 Description=Hello Test Service
 
@@ -31,57 +66,134 @@ User=slayer
 
 [Install]
 WantedBy=multi-user.target
+```
 
+---
 
-Reloaded the daemon:
+## Step 4 — Reload systemd
+
+```bash
 sudo systemctl daemon-reload
+```
 
-Next we started and verified the service.
+```text
+required after creating or modifying service files
+```
 
+---
+
+## Step 5 — Start Service
+
+```bash
 sudo systemctl start hello
+```
 
+---
+
+## Step 6 — Verify Status
+
+```bash
 sudo systemctl status hello
+```
 
-Observed:
-	•	Active (running)
-	•	Main PID
-	•	Logs integrated
+### Observe
 
-We killed the process to check if it restarts automatically
+```text
+Active (running)
+Main PID
+Logs
+```
 
+---
+
+## Step 7 — Test Restart Behavior
+
+Kill process:
+
+```bash
 kill -9 <PID>
+```
 
-Observed:
-	•	New PID created
-	•	Service automatically restarted
+### Result
 
-Confirmed:
-	•	Restart=always works
-	•	systemd supervises processes
+```text
+new PID created
+service restarted automatically
+```
 
-after that we inspected the logs using:
+---
 
+## Restart Policy
+
+```ini
+Restart=always
+```
+
+```text
+ensures service restarts after crash or manual kill
+```
+
+---
+
+## View Logs
+
+```bash
 journalctl -u hello -n 10
+```
 
-Learned:
-	•	Logs tied to service unit
-	•	Lifecycle events recorded
-	•	Crashes and restarts visible
+### Meaning
 
+```text
+-u → filter by service
+-n 10 → show last 10 logs
+```
 
-  Key Concepts Learned
-	•	systemd is PID 1 and manages services.
-	•	Custom scripts can be converted into persistent services.
-	•	Restart policies control resilience.
-	•	Services are independent of shell sessions.
-	•	Logs are centralized via journalctl.
-	•	daemon-reload required after modifying unit files.
+---
 
+## Observations
 
+```text
+logs tied to service unit
+lifecycle events recorded
+crashes and restarts visible
+```
 
+---
 
+## Service Behavior
 
+```text
+runs independently of terminal
+continues after logout
+managed entirely by systemd
+```
 
+---
 
+## Key Takeaways
 
+```text
+custom scripts → can become system services
+systemd supervises and restarts processes
+daemon-reload is mandatory after changes
+journalctl provides centralized logging
+services are independent of shell sessions
+```
 
+---
+
+## Execution Flow
+
+```text
+create script
+↓
+create service file
+↓
+daemon-reload
+↓
+start service
+↓
+systemd supervises execution
+↓
+logs available via journalctl
+```

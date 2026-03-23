@@ -1,74 +1,187 @@
+# Linux — Day 06: Package Management & Binaries
+
+## Concept
+
 Linux commands are executable binary files stored in system directories.
-When a command is typed, the shell searches directories listed in $PATH, finds the matching binary, and executes it as a process.
 
+```text
+command typed → shell searches $PATH → binary found → executed as process
+```
 
-commands used: 
+---
 
-which ls - used to identify where a command binary is located
+## Binary Locations
 
-echo $PATH - displays the list of directories the shell searches for executables.
-When a command is typed, Linux searches these directories in order and executes the first match found.
+Common directories:
 
-ls /bin - lists essential binary and also contains critical system programs required for basic operation.
+```text
+/bin       → essential system binaries
+/usr/bin   → user-level binaries
+/sbin      → system/admin binaries
+/usr/sbin  → advanced administrative binaries
+```
 
-ls /usr/bin - lists user-level binaries, a direcotory where all standard user commands are located.
+---
 
-ls /sbin and ls /usr/sbin - contains administrative and system level binaries. 
-Typically used by root or admins.
+## Commands Covered
 
-sudo apt update - updates the package metadata.
-It refreshes available package information but does not install upgrades.
+### 1. `which` — Locate Binary
 
+```bash
+which ls
+```
+
+```text
+shows full path of command binary
+```
+
+---
+
+### 2. `$PATH` — Search Directories
+
+```bash
+echo $PATH
+```
+
+```text
+list of directories shell searches for executables
+search happens in order
+first match is executed
+```
+
+---
+
+### 3. Inspect Binary Directories
+
+```bash
+ls /bin
+ls /usr/bin
+ls /sbin
+ls /usr/sbin
+```
+
+```text
+reveals where commands are stored
+```
+
+---
+
+## Package Management (APT)
+
+### Update Package Index
+
+```bash
+sudo apt update
+```
+
+```text
+refreshes package metadata
+does not install upgrades
+```
+
+---
+
+### Install Package
+
+```bash
 sudo apt install tree
+```
 
-Installs a package.
+### What Happens
 
-Process:
-	•	Downloads package
-	•	Resolves dependencies
-	•	Places binary in system directory
-	•	Registers package in package database
+```text
+downloads package
+resolves dependencies
+places binaries in system directories
+updates package database
+```
 
-  sudo apt remove tree - removes installed package and its binaries
+---
 
+### Remove Package
 
-dpkg -S /bin/ls - identifies which package owns a specific file.
-Example: ls belongs to the coreutil package.
+```bash
+sudo apt remove tree
+```
 
+```text
+removes installed package and binaries
+```
+
+---
+
+## Package Inspection (dpkg)
+
+### Find Package Owning a File
+
+```bash
+dpkg -S /bin/ls
+```
+
+```text
+identifies which package owns the file
+example: coreutils
+```
+
+---
+
+### List Installed Packages
+
+```bash
 dpkg -l | grep bash
+```
 
-lists installed packages related to bash.
-used to verify installed software.
+```text
+filters installed packages related to bash
+```
 
+---
+
+### View Dependencies
+
+```bash
 apt depends bash
-Shows package dependencies.
-Demonstrates how Linux packages rely on other packages.
+```
 
+```text
+shows package dependency tree
+```
 
-Key Observations
-	•	Every command is an executable file stored on disk.
-	•	The shell uses $PATH to locate binaries.
-	•	Installing a package places files into system directories.
-	•	Removing a package removes those files.
-	•	The system tracks installed packages using dpkg.
-	•	Software lifecycle in Linux is managed through package managers.
+---
 
+## Key Observations
 
-  What I Learned
-	•	Linux is modular, composed of many small programs.
-	•	Commands are binaries executed by the kernel.
-	•	Package management handles installation, dependencies, and file placement.
-	•	There is no magic behind apt install; it is structured file deployment.
+```text
+every command is a binary file
+shell uses $PATH to locate executables
+package installation places files into system directories
+dpkg tracks installed packages
+```
 
-⸻
+---
 
+## Key Takeaways
 
+```text
+Linux is modular (many small programs)
+commands = binaries executed by kernel
+APT handles install/remove operations
+dependencies are automatically resolved
+package manager = structured software lifecycle
+```
 
+---
 
+## Execution Flow
 
-
-
-
-
-
-  
+```text
+user runs command
+↓
+shell searches $PATH
+↓
+binary located
+↓
+process created by kernel
+↓
+packages installed via apt manage binaries
+```

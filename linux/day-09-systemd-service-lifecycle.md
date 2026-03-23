@@ -1,101 +1,159 @@
+# Linux — systemd & Service Lifecycle Management
+
+## Concept
+
+`systemd` is the init system responsible for managing services and processes on Linux.
+
+```text
+systemd (PID 1) → manages all services and processes
+```
+
+---
+
+## Verify Init System
+
+```bash
 ps -p 1 -o comm=
+```
 
-its output showed : systemd
+### Output
 
-Meaning:
-	•	systemd is PID 1.
-	•	It is the root of the process tree.
-	•	It manages all other services.
+```text
+systemd
+```
 
-Next we checked the running services:
+### Meaning
 
+```text
+PID 1 → first process started by kernel
+systemd → root of process tree
+controls all services
+```
+
+---
+
+## List Running Services
+
+```bash
 systemctl list-units --type=service
+```
 
-displays active services such as : 
+### Example Services
 
-cron 
+```text
+cron
 dbus
-systemmd-journald
+systemd-journald
+```
 
-These are background processes (daemons)
+### Meaning
 
-after that we inspected a service name cron by
+```text
+services = background processes (daemons)
+managed by systemd
+```
 
+---
+
+## Inspect a Service
+
+```bash
 systemctl status cron
+```
 
-Observed:
-	•	Active state (active / inactive / failed)
-	•	Main PID
-	•	Uptime
-	•	Recent log entries
+### Observe
 
-This connects:
+```text
+Active state (active / inactive / failed)
+Main PID
+Uptime
+Recent logs
+```
+
+### Mapping
+
+```text
 Service → Process → Logs
+```
 
+---
 
-then we stopped it and started it again by 
+## Start and Stop Services
 
+```bash
 sudo systemctl stop cron
 sudo systemctl start cron
+```
 
-stop affects runtime state only
-service can be restarted manually.
+### Key Point
 
-Then we learnt difference between enable and start.
+```text
+stop/start → affects runtime only
+does NOT persist across reboot
+```
 
-We understood:
+---
 
-•	start → runs now.
-	•	enable → starts automatically at boot.
+## Start vs Enable
 
-Next we learnt about viewing service logs like event viewer from windows.
+```text
+start  → run service immediately
+enable → start automatically at boot
+```
 
+---
+
+## View Logs (journalctl)
+
+```bash
 journalctl -u cron --no-pager
+```
 
-Meaning:
+### Meaning
 
--u -> filter by service.
---no-pager -> print directly to terminal
+```text
+-u → filter by service
+--no-pager → print directly
+```
 
-To view recent logs:
+---
 
+## View Recent Logs
+
+```bash
 journalctl -u cron -n 10
+```
 
-oberserved
+### Observations
 
-service stop event 
-service start event 
-Log entries tied to lifecycle changes.
+```text
+service stop events
+service start events
+lifecycle-related logs
+```
 
-Key Concepts Learned
-	•	systemd is PID 1 and manages all services.
-	•	Services are controlled via systemctl.
-	•	Active ≠ Enabled.
-	•	Logs are accessible through journalctl.
-	•	Service failures should be diagnosed via:
-	•	Exit code
-	•	Log messages
+---
 
-Debugging Model
+## Debugging Workflow
 
 If a service fails:
-	1.	systemctl status <service>
-	2.	Check exit code / result.
-	3.	Inspect recent logs via journalctl.
-	4.	Fix root cause instead of blindly restarting.
 
+```text
+1. systemctl status <service>
+2. check state and exit code
+3. inspect logs using journalctl
+4. identify root cause
+5. fix issue (do not blindly restart)
+```
 
+---
 
+## Key Takeaways
 
-
-
-
-
-
-
-
-
-
-
-
-
+```text
+systemd → PID 1 (service manager)
+systemctl → control services
+journalctl → view logs
+active ≠ enabled
+logs are essential for debugging
+```

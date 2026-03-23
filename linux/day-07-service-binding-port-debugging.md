@@ -1,56 +1,171 @@
-Started a simple Python HTTP server and investigated how services bind to ports and become reachable.
+# Linux — Day 07: Service Binding & Port Debugging
 
+## Concept
+
+Services listen on network ports to accept connections.
+
+```text
+process → binds to port → enters LISTEN state → accepts connections
+```
+
+Service accessibility depends on:
+- process running
+- port listening
+- correct network binding
+
+---
+
+## Step 1 — Start Service
+
+```bash
 python3 -m http.server 8000
+```
 
-Verified running process via : ps aux | grep python
+---
 
-Checked Listening ports: ss -tulnp | grep 8000
+## Step 2 — Verify Process
 
-observed : 0.0.0.0:8000
-Meaning:
-	•	Service was listening on port 8000.
-	•	Bound to all network interfaces.
+```bash
+ps aux | grep python
+```
 
-We Tested Locally by: curl http://localhost:8000
-It retunrned html response, confirming service accesssibility.
+```text
+confirms server process is running
+```
 
-Next we checked binding behaviour restarted server with : 
+---
+
+## Step 3 — Check Listening Ports
+
+```bash
+ss -tulnp | grep 8000
+```
+
+### Output
+
+```text
+0.0.0.0:8000
+```
+
+---
+
+## Binding Explanation
+
+```text
+0.0.0.0 → listens on all network interfaces
+127.0.0.1 → listens only on localhost
+```
+
+---
+
+## Step 4 — Test Service
+
+```bash
+curl http://localhost:8000
+```
+
+```text
+HTML response confirms service accessibility
+```
+
+---
+
+## Step 5 — Bind to Localhost Only
+
+```bash
 python3 -m http.server 8000 --bind 127.0.0.1
+```
 
-observed: 
+Check:
+
+```bash
+ss -tulnp | grep 8000
+```
+
+### Output
+
+```text
 127.0.0.1:8000
+```
 
-Meaning:
-	•	Service accessible only from local machine.
-	•	Not reachable externally.
+---
 
-  Then we checked starting server on different port: 
-  python3 -m http.server 9000
+## Result
 
-  Then Tested: 
-  curl http://localhost:8000
+```text
+service accessible only locally
+not reachable externally
+```
 
-  Result connection refused.
-Conclusion: 
-No process was listening on port 8000.
+---
 
-Key Concepts Learned
-	•	A service must be in LISTEN state to accept connections.
-	•	0.0.0.0 means listen on all interfaces.
-	•	127.0.0.1 means listen only locally.
-	•	If no process listens on a port, connection is refused.
-	•	Service reachability troubleshooting follows layered checks:
-	1.	Is process running?
-	2.	Is port listening?
-	3.	Is binding correct?
-	4.	Is traffic allowed?
+## Step 6 — Change Port
 
-What This Connects To
-	•	Docker port mappings
-	•	Firewall rules
-	•	Reverse proxies
-	•	Cloud security groups
-	•	Real-world service debugging
+```bash
+python3 -m http.server 9000
+```
 
+Test old port:
 
-  
+```bash
+curl http://localhost:8000
+```
+
+### Result
+
+```text
+connection refused
+```
+
+---
+
+## Reason
+
+```text
+no process is listening on port 8000
+```
+
+---
+
+## Debugging Model
+
+```text
+1. is process running?
+2. is port in LISTEN state?
+3. is binding correct?
+4. is traffic allowed (firewall/network)?
+```
+
+---
+
+## Key Concepts
+
+```text
+LISTEN → service ready to accept connections
+0.0.0.0 → all interfaces
+127.0.0.1 → local only
+connection refused → no listener on port
+```
+
+---
+
+## Real-World Connections
+
+```text
+Docker port mappings
+firewall rules
+reverse proxies
+cloud security groups
+production debugging
+```
+
+---
+
+## Key Takeaways
+
+```text
+services must bind to ports to be reachable
+binding determines accessibility scope
+port mismatch → connection failure
+systematic debugging avoids guesswork
+```

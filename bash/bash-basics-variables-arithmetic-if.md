@@ -1,34 +1,3 @@
-Today we learned the Bash scripting and its some helpful commands
-
-
-expr is used for any mathematical problem
-like
-expre 10+10
-expre 10 /* 247
-other commands are same just the symbol changes
-
-after that we learned variable.
-
-example: 
-
-we used file=$(pwd)
-by above variable we were printing the printing directory.
-
-after that we learned the if statement
-
-syntax:
-
-if [ condition ]
-then
-    echo "statement"
-else
-    echo "statement"
-fi
-
-in above syntax else is also used for running commands if first condition is not met to check the second condition.
-
-Thanks!
-
 # Bash Basics — Variables, Arithmetic, and Conditionals
 
 ## Concept
