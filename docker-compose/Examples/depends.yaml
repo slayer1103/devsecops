@@ -1,0 +1,9 @@
+services:
+  db:
+    image: nginx
+
+  app:
+    image: curlimages/curl
+    command: sleep 300
+    depends_on :
+      - db

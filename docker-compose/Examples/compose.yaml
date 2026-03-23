@@ -1,0 +1,9 @@
+services:
+  app:
+    image: ubuntu
+    command: sleep 300
+    volumes:
+      - myvolume:/data
+
+volumes:
+  myvolume:   

@@ -1,0 +1,8 @@
+services:
+  web:
+     image: nginx
+
+  client:
+     image: curlimages/curl
+     command: sleep 300
+     
