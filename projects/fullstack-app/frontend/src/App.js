@@ -5,15 +5,15 @@ function App() {
 
   useEffect(() => {
     fetch("/api")
-      .then(res => res.text())
-      .then(data => setMessage(data))
-      .catch(err => console.error(err));
+      .then(res => res.json())
+      .then(data => setMessage(data));
   }, []);
 
   return (
     <div>
       <h1>Frontend</h1>
-      <p>{message}</p>
+      <p>Status: {message?.message}</p>
+      <p>Time: {message?.time}</p>
     </div>
   );
 }
