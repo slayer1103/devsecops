@@ -4,8 +4,8 @@
 
 A fullstack application consists of:
 
-    Frontend (React)
-    Backend (Node.js + Express)
+- Frontend (React)  
+- Backend (Node.js + Express)  
 
 Both run in separate containers and communicate through a controlled entry point.
 
@@ -13,14 +13,16 @@ Both run in separate containers and communicate through a controlled entry point
 
 ## Final Architecture
 
-    Browser → localhost:3000
-            ↓
-    Nginx (Frontend Container)
-            ↓
-    ├── "/"    → React static files
-    └── "/api" → Backend service (internal Docker network)
-                        ↓
-                  Node.js Backend
+```
+Browser → localhost:3000
+        ↓
+Nginx (Frontend Container)
+        ↓
+├── "/"    → React static files
+└── "/api" → Backend service (internal Docker network)
+                    ↓
+              Node.js Backend
+```
 
 ---
 
@@ -29,12 +31,14 @@ Both run in separate containers and communicate through a controlled entry point
 ### 1. Frontend (React)
 
 - Built using:
-    
-    npm run build
+```
+npm run build
+```
 
 - Output:
-
-    build/ (static HTML, CSS, JS)
+```
+build/ (static HTML, CSS, JS)
+```
 
 - Served by Nginx, not React dev server
 
@@ -43,12 +47,14 @@ Both run in separate containers and communicate through a controlled entry point
 ### 2. Backend (Express)
 
 - Runs on:
-
-    app.listen(6000)
+```
+app.listen(6000)
+```
 
 - API endpoint:
-
-    GET /api → returns response
+```
+GET /api → returns response
+```
 
 ---
 
@@ -56,8 +62,8 @@ Both run in separate containers and communicate through a controlled entry point
 
 Defines services:
 
-    frontend → Nginx container
-    backend  → Node container
+- frontend → Nginx container  
+- backend  → Node container  
 
 Both connected via internal Docker network.
 
@@ -67,19 +73,22 @@ Both connected via internal Docker network.
 
 Acts as:
 
-    Static file server + Reverse proxy
+- Static file server  
+- Reverse proxy  
 
 ---
 
 ## Nginx Routing Logic
 
-    location / {
-        serve React build
-    }
+```
+location / {
+    serve React build
+}
 
-    location /api {
-        forward request → backend:6000
-    }
+location /api {
+    forward request → backend:6000
+}
+```
 
 ---
 
@@ -87,24 +96,16 @@ Acts as:
 
 ### Step-by-step
 
-    1. User opens browser
-       → localhost:3000
-
-    2. Request hits Nginx
-
-    3. If path = "/"
-       → return React UI
-
-    4. React executes fetch("/api")
-
-    5. Nginx intercepts "/api"
-       → forwards to backend:6000
-
-    6. Backend responds
-
-    7. Nginx returns response to frontend
-
-    8. React updates UI
+```
+1. User opens browser → localhost:3000
+2. Request hits Nginx
+3. "/" → React UI served
+4. React executes fetch("/api")
+5. Nginx routes /api → backend:6000
+6. Backend responds
+7. Nginx returns response
+8. React updates UI
+```
 
 ---
 
@@ -112,32 +113,39 @@ Acts as:
 
 ### Before (incorrect / dev-style)
 
-    Browser → backend (localhost:6001)
-    Problems:
-    - CORS issues
-    - direct dependency
-    - fragile setup
+```
+Browser → backend (localhost:6001)
+```
+
+Problems:
+- CORS issues  
+- Direct dependency  
+- Fragile setup  
 
 ---
 
 ### After (correct architecture)
 
-    Browser → frontend (Nginx)
-            → backend (internal only)
+```
+Browser → frontend (Nginx)
+        → backend (internal only)
+```
 
-    Benefits:
-    - no CORS
-    - backend hidden
-    - clean routing
-    - production-ready
+Benefits:
+- No CORS  
+- Backend hidden  
+- Clean routing  
+- Production-ready  
 
 ---
 
 ## Port Understanding
 
-    Host:      3000
-    Container: 80 (Nginx)
-    Backend:   6000 (internal)
+```
+Host:      3000
+Container: 80 (Nginx)
+Backend:   6000 (internal)
+```
 
 Backend is NOT exposed to host.
 
@@ -145,15 +153,13 @@ Backend is NOT exposed to host.
 
 ## Why Backend Port Was Removed
 
-    Removing:
-        ports: "6001:6000"
+```
+ports: "6001:6000"  → removed
+```
 
-    Means:
-        backend is NOT accessible externally
-
-    Still works because:
-
-        Nginx → backend (internal Docker network)
+Result:
+- Backend not accessible externally  
+- Still works via internal Docker network  
 
 ---
 
@@ -161,53 +167,55 @@ Backend is NOT exposed to host.
 
 ### 1. Separation of Concerns
 
-    Frontend → UI
-    Backend  → logic
-    Nginx    → routing
+```
+Frontend → UI
+Backend  → logic
+Nginx    → routing
+```
 
 ---
 
 ### 2. Reverse Proxy
 
-Nginx acts as a middle layer:
-
-    client → nginx → backend
+```
+client → nginx → backend
+```
 
 ---
 
 ### 3. Internal Docker Networking
 
-    service name = hostname
-
-    backend → accessible as:
-        http://backend:6000
+```
+service name = hostname
+backend → http://backend:6000
+```
 
 ---
 
 ### 4. Routing Control
 
-Frontend does NOT decide backend URL.
-
-Nginx controls routing.
+- Frontend does NOT decide backend URL  
+- Nginx controls routing  
 
 ---
 
 ### 5. Production vs Development
 
-    Dev:
-        React dev server + proxy
-
-    Prod:
-        Nginx + static build + reverse proxy
+```
+Dev  → React dev server + proxy
+Prod → Nginx + static build + reverse proxy
+```
 
 ---
 
 ## Mental Model (Memorize This)
 
-    Browser never talks to backend directly
+```
+Browser → frontend (Nginx)
+         → backend (via routing)
+```
 
-    Browser → frontend (Nginx)
-             → backend (via routing)
+Browser never talks to backend directly.
 
 ---
 
@@ -215,8 +223,12 @@ Nginx controls routing.
 
 This is no longer:
 
-    "running containers"
+```
+running containers
+```
 
 This is:
 
-    designing how services communicate in a real system
+```
+designing how services communicate in a real system
+```
