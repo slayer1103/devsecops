@@ -1,8 +1,8 @@
 services:
   backend:
     build: ./backend
-   # ports:
-   #   - "6001:6000"
+    ports:
+      - "6001:6000"
 
   frontend:
     build: ./frontend

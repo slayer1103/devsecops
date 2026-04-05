@@ -3,13 +3,17 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors());
-
-app.get("/api", (req, res) => {
+app.get("/api/status", (req, res) => {
   res.json({
-    message: "Working properly",
-    time: Date.now()
+    status: "running",
+    time: new Date().toISOString()
   });
 });
 
+app.get("/api/user", (req, res) => {
+  res.json({
+    name: "Yashodhan",
+    role: "DevOps Learner"
+  });
+});
 app.listen(6000);
