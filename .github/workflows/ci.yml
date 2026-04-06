@@ -67,10 +67,18 @@ jobs:
         run: docker compose up -d --build
 
       - name: wait for services to be ready
-        run: sleep 10
+        run: |
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:3000 && break
+            echo "attempt $i failed, retrying..."
+            sleep 2
+          done
 
-      - name: check frontend is responding
-        run: curl -f http://localhost:3000
+      - name: validate api response
+        run: |
+          RESPONSE=$(curl -s http://localhost:3000/api)
+          echo "$RESPONSE"
+          echo "$RESPONSE" | grep -q "Working properly" || (echo "API response unexpected" && exit 1)
 
       - name: show logs if anything failed
         if: failure()
