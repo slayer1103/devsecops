@@ -76,7 +76,7 @@ jobs:
 
       - name: validate api response
         run: |
-          RESPONSE=$(curl -s http://localhost:3000/api)
+          RESPONSE=$(curl -s http://localhost:3000/api/user)
           echo "$RESPONSE"
           echo "$RESPONSE" | grep -q "Working properly" || (echo "API response unexpected" && exit 1)
 
