@@ -78,7 +78,7 @@ jobs:
         run: |
           RESPONSE=$(curl -s http://localhost:3000/api/user)
           echo "$RESPONSE"
-          echo "$RESPONSE" | grep -q "Working properly" || (echo "API response unexpected" && exit 1)
+          echo "$RESPONSE" | grep -q "Yashodhan" || (echo "API response unexpected" && exit 1)
 
       - name: show logs if anything failed
         if: failure()
