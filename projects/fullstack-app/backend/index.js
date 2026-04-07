@@ -12,7 +12,7 @@ app.get("/api/status", (req, res) => {
 
 app.get("/api/user", (req, res) => {
   res.json({
-    name: "WrongName",
+    name: "Yashodhan",
     role: "DevOps Learner"
   });
 });
