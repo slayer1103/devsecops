@@ -68,11 +68,7 @@ jobs:
 
       - name: wait for services to be ready
         run: |
-          for i in $(seq 1 15); do
-            curl -sf http://localhost:3000 && break
-            echo "attempt $i failed, retrying..."
-            sleep 2
-          done
+          curl -sf http://localhost:3000
 
       - name: validate api response
         run: |
