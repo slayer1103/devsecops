@@ -68,8 +68,11 @@ jobs:
 
       - name: wait for services to be ready
         run: |
-          curl -sf http://localhost:3000
-
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:3000/health && break
+            echo "waiting for health..."
+            sleep 2
+          done
       - name: validate api response
         run: |
           RESPONSE=$(curl -s http://localhost:3000/api/user)
