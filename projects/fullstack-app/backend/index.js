@@ -19,5 +19,5 @@ app.get("/api/user", (req, res) => {
 app.listen(6000);
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.status(500).json({ status: "fail" });
 });
