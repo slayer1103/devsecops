@@ -16,8 +16,9 @@ app.get("/api/user", (req, res) => {
     role: "DevOps Learner"
   });
 });
-app.listen(6000);
 
 app.get("/health", (req, res) => {
   res.status(500).json({ status: "fail" });
 });
+
+app.listen(6000);
