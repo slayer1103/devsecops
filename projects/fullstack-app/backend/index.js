@@ -18,7 +18,10 @@ app.get("/api/user", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+  // simulate slow startup
+  setTimeout(() => {
+    res.json({ status: "ok" });
+  }, 20000); // 20 sec delay
 });
 
 app.listen(6000);
