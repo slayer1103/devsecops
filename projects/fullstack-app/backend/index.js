@@ -21,7 +21,7 @@ app.get("/health", (req, res) => {
   // simulate slow startup
   setTimeout(() => {
     res.json({ status: "ok" });
-  }, 20000); // 20 sec delay
+  }, 30000); // 30 sec delay
 });
 
 app.listen(6000);
