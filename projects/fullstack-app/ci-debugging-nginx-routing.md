@@ -12,8 +12,8 @@ Pipeline failed at API validation:
 
 ## Root Cause
 nginx inside container did not include /api route
-CI builds a fresh image, so any missing COPY or cached layer issues break routing
-Local environment may accidentally work due to stale containers/images
+- CI builds a fresh image, so any missing COPY or cached layer issues break routing
+- Local environment may accidentally work due to stale containers/images
 
 Reason:
 - nginx.conf updated locally
