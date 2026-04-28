@@ -11,10 +11,8 @@ app.get("/api/status", (req, res) => {
 });
 
 app.get("/api/user", (req, res) => {
-  res.json({
-    name: "Yashodhan",
-    role: "DevOps Learner"
-  });
+  res.send("<h1>Not JSON anymore</h1>");
+  
 });
 
 app.get("/health", (req, res) => {
