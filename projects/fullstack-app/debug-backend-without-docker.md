@@ -89,3 +89,22 @@ Use Docker when:
     - Testing nginx routing
     - Testing full system
     - Reproducing CI behavior
+
+## Final State After Fix
+
+- Backend stability restored (removed crash from /health)
+- API contract restored (/api/user returns JSON with expected fields)
+- CI validation improved with retry logic
+
+### Observed Behavior
+
+- Health check confirms startup only
+- Validation enforces API correctness
+- Retry handles transient failures but not persistent ones
+
+### Key Takeaways
+
+- Readiness ≠ Stability
+- Availability ≠ Correctness
+- Retry ≠ Recovery
+- CI must detect real failures, not hide them
