@@ -75,9 +75,23 @@ jobs:
           done
       - name: validate api response
         run: |
-          RESPONSE=$(curl -s http://localhost:3000/api/user)
-          echo "$RESPONSE"
-          echo "$RESPONSE" | grep -q "Yashodhan" || (echo "API response unexpected" && exit 1)
+          ATTEMPTS=10
+          SLEEP=3
+
+          for i in $(seq 1 $ATTEMPTS); do
+            RESPONSE=$(curl -s http://localhost:3000/api/user || true)
+            echo "attempt $i: $RESPONSE"
+
+            echo "$RESPONSE" | grep -q "Yashodhan" && {
+              echo "validation passed"
+              exit 0
+            }
+
+            sleep $SLEEP
+          done
+
+          echo "API response unexpected after retries"
+          exit 1
 
       - name: show logs if anything failed
         if: failure()
