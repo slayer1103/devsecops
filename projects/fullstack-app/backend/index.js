@@ -11,9 +11,10 @@ app.get("/api/status", (req, res) => {
 });
 
 app.get("/api/user", (req, res) => {
-  res.send("<h1>Not JSON anymore</h1>");
-  
+  res.json({ name: "Yashodhan", role: "DevOps Learner" });
 });
+  
+
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
