@@ -12,6 +12,7 @@ app.get("/api/status", (req, res) => {
 
 app.get("/api/user", (req, res) => {
   res.json({ name: "Yashodhan", role: "DevOps Learner" });
+    setTimeout(() => process.exit(1), 10000);
 });
   
 
