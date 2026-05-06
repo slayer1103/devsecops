@@ -10,9 +10,14 @@ app.get("/api/status", (req, res) => {
   });
 });
 
+const os = require("os");
+
 app.get("/api/user", (req, res) => {
-  res.json({ name: "Yashodhan", role: "DevOps Learner" });
-    setTimeout(() => process.exit(1), 10000);
+  res.json({
+    name: "Yashodhan",
+    role: "DevOps Learner",
+    host: os.hostname()
+  });
 });
   
 
