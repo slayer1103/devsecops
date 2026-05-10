@@ -14,11 +14,15 @@ const os = require("os");
 
 app.get("/api/user", (req, res) => {
   res.json({
-    name: "Yashodhan",
-    role: "DevOps Learner",
-    host: os.hostname()
-  });
+  name: "Yashodhan",
+  role: "DevOps Learner",
+  host: os.hostname(),
+  "version": "v2",
+  "deployment": "green"
+
 });
+  });
+
   
 
 

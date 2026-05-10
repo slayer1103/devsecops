@@ -1,18 +1,51 @@
 services:
-  backend:
+  # Blue deployment backend
+  # This represents the currently stable version
+  backend-blue:
     build: ./backend
-    ports:
+
+    # expose makes service available ONLY inside Docker network
+    # nginx can access it internally
+    # host machine cannot directly access it
+    expose:
       - "6000"
+
+    # automatically restart container after crash/failure
     restart: always
+
+    # Docker checks if backend is actually healthy
+    # not just "running"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
       interval: 5s
       timeout: 2s
       retries: 3
 
+  # Green deployment backend
+  # Used to simulate newer deployment version
+  backend-green:
+    build: ./backend
+
+    expose:
+      - "6000"
+
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+  # nginx frontend / reverse proxy
   frontend:
     build: ./frontend
+
+    # expose frontend to browser
     ports:
       - "3000:80"
+
+    # frontend depends on both backend services
     depends_on:
-      - backend
+      - backend-blue
+      - backend-green
