@@ -692,3 +692,327 @@ Learned:
 - complete Kubernetes networking path
 
 Verified practically that Pod replacement automatically updates Service endpoints and that Ingress continues routing traffic without manual intervention.
+
+---
+
+## Persistent Volumes and Persistent Volume Claims
+
+### Problem Statement
+
+Pods are ephemeral.
+
+When a Pod is deleted:
+
+```text
+Pod deleted
+    ↓
+Container deleted
+```
+
+Data stored inside the container filesystem is lost.
+
+This behavior is unsuitable for stateful applications such as:
+
+- PostgreSQL
+- MySQL
+- MongoDB
+- Jenkins
+
+These applications require storage that survives Pod replacement.
+
+---
+
+## Persistent Volume (PV)
+
+Created `pv.yaml`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+
+metadata:
+  name: demo-pv
+
+spec:
+  capacity:
+    storage: 1Gi
+
+  accessModes:
+    - ReadWriteOnce
+
+  hostPath:
+    path: /tmp/demo-pv
+```
+
+Applied:
+
+```bash
+kubectl apply -f pv.yaml
+```
+
+Verified:
+
+```bash
+kubectl get pv
+```
+
+Initial status:
+
+```text
+STATUS = Available
+```
+
+---
+
+## Persistent Volume Claim (PVC)
+
+Created `pvc.yaml`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: demo-pvc
+
+spec:
+  storageClassName: ""
+
+  accessModes:
+    - ReadWriteOnce
+
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+Applied:
+
+```bash
+kubectl apply -f pvc.yaml
+```
+
+Verified:
+
+```bash
+kubectl get pvc
+kubectl get pv
+```
+
+Final status:
+
+```text
+PV  = Bound
+PVC = Bound
+```
+
+---
+
+## StorageClass Troubleshooting
+
+Initial observation:
+
+```text
+PV  = Available
+PVC = Pending
+```
+
+Cause:
+
+```text
+PVC requested default StorageClass
+PV had no StorageClass configured
+```
+
+Resolution:
+
+```yaml
+storageClassName: ""
+```
+
+Deleted and recreated PVC.
+
+Result:
+
+```text
+PV  = Bound
+PVC = Bound
+```
+
+---
+
+## Understanding PV and PVC
+
+Persistent Volume:
+
+```text
+Actual storage resource
+```
+
+Persistent Volume Claim:
+
+```text
+Request for storage
+```
+
+Relationship:
+
+```text
+Pod
+ ↓
+PVC
+ ↓
+PV
+```
+
+---
+
+## Persistent Storage Pod
+
+Created `pvc-pod.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: pvc-demo
+
+spec:
+  containers:
+    - name: busybox
+      image: busybox:1.35
+
+      command:
+        - sh
+        - -c
+        - sleep 3600
+
+      volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+
+  volumes:
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: demo-pvc
+```
+
+Applied:
+
+```bash
+kubectl apply -f pvc-pod.yaml
+```
+
+---
+
+## Persistence Verification
+
+Created file:
+
+```bash
+echo "persistent data" > /data/test.txt
+```
+
+Verified:
+
+```bash
+cat /data/test.txt
+```
+
+Output:
+
+```text
+persistent data
+```
+
+Deleted Pod:
+
+```bash
+kubectl delete pod pvc-demo
+```
+
+Recreated Pod:
+
+```bash
+kubectl apply -f pvc-pod.yaml
+```
+
+Verified file again:
+
+```bash
+cat /data/test.txt
+```
+
+Output:
+
+```text
+persistent data
+```
+
+The file survived Pod replacement.
+
+---
+
+## Storage Comparison
+
+Container Filesystem:
+
+```text
+Delete Container
+    ↓
+Data Lost
+```
+
+emptyDir:
+
+```text
+Delete Pod
+    ↓
+Data Lost
+```
+
+Persistent Volume:
+
+```text
+Delete Pod
+    ↓
+Data Survives
+```
+
+---
+
+## Key Learning
+
+Pods are temporary.
+
+Persistent Volumes are not.
+
+Kubernetes separates:
+
+```text
+Compute
+```
+
+from:
+
+```text
+Storage
+```
+
+allowing applications to survive Pod replacement without losing data.
+
+---
+
+## Session Summary
+
+Learned:
+
+- Persistent Volume (PV)
+- Persistent Volume Claim (PVC)
+- StorageClass troubleshooting
+- PV/PVC binding process
+- Persistent storage architecture
+- Pod-independent storage lifecycle
+
+Verified practically that data survives Pod deletion when stored through a Persistent Volume Claim.
