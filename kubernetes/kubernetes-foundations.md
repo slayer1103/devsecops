@@ -1016,3 +1016,202 @@ Learned:
 - Pod-independent storage lifecycle
 
 Verified practically that data survives Pod deletion when stored through a Persistent Volume Claim.
+
+---
+
+## Rolling Updates
+
+### Objective
+
+Update a running application without deleting all Pods simultaneously and causing downtime.
+
+---
+
+## Current Deployment Verification
+
+Verified existing Deployment:
+
+```bash
+kubectl get deployment nginx-deployment
+kubectl get pods
+```
+
+Observed:
+
+```text
+READY = 2/2
+AVAILABLE = 2
+```
+
+Two Pods were running and serving traffic.
+
+---
+
+## Rollout Status Check
+
+Verified Deployment health:
+
+```bash
+kubectl rollout status deployment/nginx-deployment
+```
+
+Observed:
+
+```text
+deployment "nginx-deployment" successfully rolled out
+```
+
+---
+
+## Image Update
+
+Updated Deployment image:
+
+```bash
+kubectl set image deployment/nginx-deployment nginx=nginx:1.25
+```
+
+Observed:
+
+```text
+deployment.apps/nginx-deployment image updated
+```
+
+---
+
+## Watching the Rolling Update
+
+Monitored Pods in real time:
+
+```bash
+kubectl get pods -w
+```
+
+Observed sequence:
+
+```text
+New Pod created
+    ↓
+ContainerCreating
+    ↓
+Running
+    ↓
+Old Pod terminating
+```
+
+Additional observations:
+
+```text
+Pending
+ContainerCreating
+Running
+Terminating
+Completed
+```
+
+Kubernetes gradually replaced old Pods with new Pods.
+
+---
+
+## ReplicaSet Observation
+
+Old Pods:
+
+```text
+nginx-deployment-59f86b59ff-*
+```
+
+New Pods:
+
+```text
+nginx-deployment-5fd577784b-*
+```
+
+The ReplicaSet hash changed.
+
+This indicates:
+
+```text
+New ReplicaSet created
+Old ReplicaSet scaled down
+New ReplicaSet scaled up
+```
+
+---
+
+## Final Verification
+
+Verified final state:
+
+```bash
+kubectl get pods
+kubectl rollout status deployment/nginx-deployment
+```
+
+Observed:
+
+```text
+2/2 Pods Running
+Deployment successfully rolled out
+```
+
+New Pods:
+
+```text
+nginx-deployment-5fd577784b-spzqq
+nginx-deployment-5fd577784b-wrrf6
+```
+
+Old Pods were removed.
+
+---
+
+## Rolling Update Workflow
+
+```text
+Deployment
+      ↓
+Create New ReplicaSet
+      ↓
+Create New Pod
+      ↓
+Wait Until Ready
+      ↓
+Terminate Old Pod
+      ↓
+Repeat Until Complete
+```
+
+---
+
+## Key Learning
+
+Kubernetes does not update Pods in place.
+
+Instead:
+
+```text
+Old ReplicaSet
+      ↓
+Scaled Down
+
+New ReplicaSet
+      ↓
+Scaled Up
+```
+
+This allows application upgrades with minimal or no downtime.
+
+---
+
+## Session Summary
+
+Learned:
+
+- Rolling Updates
+- Deployment image updates
+- Real-time rollout monitoring
+- ReplicaSet replacement strategy
+- Zero/minimal downtime deployment concept
+
+Verified practically that Kubernetes replaces application Pods gradually while maintaining service availability.
