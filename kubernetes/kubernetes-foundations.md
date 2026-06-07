@@ -1215,3 +1215,275 @@ Learned:
 - Zero/minimal downtime deployment concept
 
 Verified practically that Kubernetes replaces application Pods gradually while maintaining service availability.
+
+---
+
+## Helm Fundamentals
+
+### Objective
+
+Understand how Helm simplifies Kubernetes application deployment by packaging multiple Kubernetes resources into reusable charts.
+
+---
+
+## What Problem Helm Solves
+
+Without Helm, deploying an application often requires manually creating:
+
+- Deployment
+- Service
+- ConfigMap
+- Secret
+- Ingress
+- PersistentVolumeClaim
+- RBAC resources
+
+This results in multiple YAML files that must be maintained separately.
+
+Helm packages these resources into a reusable application bundle called a Chart.
+
+---
+
+## Core Concepts
+
+### Chart
+
+A Chart is a packaged Kubernetes application.
+
+Examples:
+
+- bitnami/nginx
+- bitnami/postgresql
+- bitnami/jenkins
+- bitnami/grafana
+
+A Chart contains Kubernetes templates and default configuration values.
+
+---
+
+### Release
+
+A Release is a deployed instance of a Chart.
+
+Example:
+
+```text
+Chart: bitnami/nginx
+Release: my-nginx
+```
+
+The same Chart can be installed multiple times using different release names.
+
+---
+
+## Verify Helm Installation
+
+Verified Helm installation:
+
+```bash
+helm version
+```
+
+Helm was already installed and operational.
+
+---
+
+## Repository Configuration
+
+Added Bitnami repository:
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+Updated repositories:
+
+```bash
+helm repo update
+```
+
+Observed:
+
+```text
+Successfully got an update from the "bitnami" chart repository
+```
+
+---
+
+## Searching Charts
+
+Searched for nginx charts:
+
+```bash
+helm search repo nginx
+```
+
+Observed nginx-related charts available in the repository.
+
+Important fields:
+
+```text
+Chart Version
+App Version
+```
+
+Example:
+
+```text
+Chart Version = Helm package version
+App Version   = Actual application version
+```
+
+---
+
+## Installing First Helm Release
+
+Installed nginx:
+
+```bash
+helm install my-nginx bitnami/nginx
+```
+
+Where:
+
+```text
+my-nginx      = Release Name
+bitnami/nginx = Chart
+```
+
+Observed:
+
+```text
+STATUS = deployed
+```
+
+---
+
+## Verification
+
+Checked installed releases:
+
+```bash
+helm list
+```
+
+Observed:
+
+```text
+NAME      NAMESPACE STATUS
+my-nginx  default   deployed
+```
+
+---
+
+## Kubernetes Resources Created
+
+Verified:
+
+```bash
+kubectl get all
+```
+
+Helm automatically created:
+
+```text
+Deployment
+ReplicaSet
+Pod
+Service
+```
+
+without manually writing Kubernetes YAML manifests.
+
+---
+
+## Useful Helm Commands
+
+View release status:
+
+```bash
+helm status my-nginx
+```
+
+View custom values:
+
+```bash
+helm get values my-nginx
+```
+
+Upgrade release:
+
+```bash
+helm upgrade my-nginx bitnami/nginx
+```
+
+Rollback release:
+
+```bash
+helm rollback my-nginx 1
+```
+
+Remove release:
+
+```bash
+helm uninstall my-nginx
+```
+
+---
+
+## Helm Workflow
+
+```text
+Repository
+    ↓
+Chart
+    ↓
+Release
+    ↓
+Kubernetes Resources
+```
+
+Example:
+
+```text
+Bitnami Repository
+        ↓
+nginx Chart
+        ↓
+my-nginx Release
+        ↓
+Deployment + Service + Pod + ReplicaSet
+```
+
+---
+
+## Key Learning
+
+Helm is the package manager for Kubernetes.
+
+Comparison:
+
+```text
+apt  → Linux Packages
+pip  → Python Packages
+npm  → Node.js Packages
+helm → Kubernetes Applications
+```
+
+Helm reduces the need to manually maintain large collections of Kubernetes YAML files and provides a standardized way to install, upgrade, rollback, and remove applications.
+
+---
+
+## Session Summary
+
+Learned:
+
+- Helm fundamentals
+- Charts
+- Releases
+- Helm repositories
+- Chart discovery
+- Helm installation workflow
+- Helm upgrade and rollback concepts
+
+Verified that Helm can deploy a complete Kubernetes application using a single command while automatically creating the required Kubernetes resources.
