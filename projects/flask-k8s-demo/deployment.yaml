@@ -24,3 +24,10 @@ spec:
 
           ports:
             - containerPort: 8000
+
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: flask-config
+                  key: APP_ENV
